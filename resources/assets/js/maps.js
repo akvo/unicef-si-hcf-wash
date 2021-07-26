@@ -1,6 +1,6 @@
 import 'leaflet';
 
-const custom = require('./custom.js'); 
+const custom = require('./custom.js');
 const _ = require('lodash');
 const axios = require('axios');
 
@@ -76,7 +76,7 @@ const fetchAPI = (endpoint) => {
         });
     });
 };
-    
+
 const setConfig = (defaultSelect) => {
     fetchAPI('config/' + defaultSelect).then(res => {
         // solve promise
@@ -247,7 +247,7 @@ $("#category-dropdown").on('change', () => {
         localStorage.setItem('app-version', appVersion);
         if (!localStorage.getItem('status') && !cfg.shapefile) {
             map.removeLayer(markerclusters);
-        } 
+        }
         $('#legend').remove();
         $('#bar-legend').remove();
         setConfig(defaultSelect);
@@ -303,8 +303,8 @@ function hoverStyle(layer) {
 function highlightFeature(e) {
     var layer = e.target;
     let name = layer.feature.properties[cfg.shapename.match].toLowerCase();
-    let dbs = (cacheMem === null && geojson === undefined) 
-        ? JSON.parse(localStorage.getItem('data')) 
+    let dbs = (cacheMem === null && geojson === undefined)
+        ? JSON.parse(localStorage.getItem('data'))
         : (geojson === undefined) ? cacheMem : geojson;
     if (!popupPoly && name === activePoly) {
         activePoly = null;
@@ -341,8 +341,8 @@ function zoomToFeature(e) {
 
 function onEachFeature(feature, layer) {
     // add polygon labels
-    let count = (feature.properties.data) 
-        ? _.filter(feature.properties.data, x => x.status === 'active').length 
+    let count = (feature.properties.data)
+        ? _.filter(feature.properties.data, x => x.status === 'active').length
         : 0;
     let latlng = layer.getBounds().getCenter();
     if (feature.properties[cfg.shapename.match].toLowerCase() === "karambi") {
@@ -474,7 +474,7 @@ const filterPieData = (dbs) => {
         // value = _.filter(data, (x) => x[attribution.id].toLowerCase() === attribution.sources[index].toLowerCase());
         value = _.filter(data, (x) => x[attribution.id].toLowerCase().includes(attribution.sources[index].toLowerCase()));
         tmp.push({
-            value: value.length, 
+            value: value.length,
             name: item,
         });
     });
@@ -558,9 +558,9 @@ const pieChartEvent = () => {
         if (params.target !== undefined && pieClicked && activePie === params.target.dataIndex || filterIndex === activePie) {
             pieClicked = false;
             activePie = null;
-            let index = (filterClicked) 
-                            ? filterIndex 
-                            : (params.target !== undefined) 
+            let index = (filterClicked)
+                            ? filterIndex
+                            : (params.target !== undefined)
                                 ? params.target.dataIndex
                                 : null;
             changeValue(dbs, []);
@@ -571,9 +571,9 @@ const pieChartEvent = () => {
         if (params.target !== undefined && !pieClicked && activePie == null || filterIndex == null) {
             // Initial click
             pieClicked = true;
-            let index = (filterClicked) 
-                            ? filterIndex 
-                            : (params.target !== undefined) 
+            let index = (filterClicked)
+                            ? filterIndex
+                            : (params.target !== undefined)
                                 ? params.target.dataIndex
                                 : null;
             activePie = index;
@@ -621,7 +621,7 @@ const startRenderMap = () => {
         // render pie chart template
         $('#piechart-tmp').remove();
         renderPieChartTmp();
-        (localStorage.getItem('data')) 
+        (localStorage.getItem('data'))
             ? setPolygonMap(JSON.parse(localStorage.getItem('data')), true)
             : fetchPolygonMap(cfg).then(res => res);
         info.addTo(map);
@@ -662,7 +662,7 @@ const mapParentFeatures = (parents, features) => {
 const getGeoJson = () => {
     d3.json(geojsonPath, (error, response) => {
         // data will be agreagated value if map is polygon
-        if (response.second_categories !== 'null') {   
+        if (response.second_categories !== 'null') {
             localStorage.setItem('second-filter', response.second_categories);
         }
         let categories = JSON.parse(response.categories);
@@ -692,10 +692,10 @@ const getGeoJson = () => {
                             properties: {
                                 ...val.properties,
                                 density: (groupData[""+match+""]) ? groupData[""+match+""].length : 0,
-                                data: (groupData[""+match+""]) 
+                                data: (groupData[""+match+""])
                                         ? groupData[""+match+""].map(x => {
                                             return { ...x, status: "active" }
-                                        }) 
+                                        })
                                         : null,
                                 status: "active"
                             }
@@ -739,7 +739,7 @@ const getGeoJson = () => {
                     data_point_id : x.data_point_id
                 };
             });
-            localStorage.setItem('parent_'+response.id, JSON.stringify(parent_points));    
+            localStorage.setItem('parent_'+response.id, JSON.stringify(parent_points));
         }
 
         if (response.type === 'monitoring' && !configs.shapefile) {
@@ -771,7 +771,7 @@ const renderSecondFilter = () => {
         name = name.join('-');
         $('#'+name+'-filter').css('display', 'inline-block');
         d3.select('#main-filter-list').append('div').attr('class', 'legend_'+index+'').attr('id', ''+name+'-parent').text(item.name);
-        d3.select('#main-filter-list').append('div').attr('id', 'sf-'+index+'-list');    
+        d3.select('#main-filter-list').append('div').attr('id', 'sf-'+index+'-list');
         let values = item.values;
         if (item.type === 'cascade') {
             values = item.values.filter(x => x.level === 0);
@@ -816,7 +816,7 @@ const renderSecondFilter = () => {
                 }
             }
         });
-    });  
+    });
 };
 
 const filterBySecondFilter = (dataName, type, dataId, key, filterType, name) => {
@@ -839,7 +839,7 @@ const filterBySecondFilter = (dataName, type, dataId, key, filterType, name) => 
         $('#' + type + '-all').text('Enable All');
         $('#' + type + '-all').attr('data-select', 'add');
     }
-    
+
     if (!cfg.shapefile) {
         dbs["features"] = $.map(dbs.features, (x) => {
             x = x;
@@ -924,7 +924,7 @@ const loadData = (allPoints, callType) => {
         });
         allPoints.properties = defaultProp;
     }
-    
+
     metadata = allPoints.properties;
     geojson = allPoints;
     if (!cfg.shapefile) {
@@ -1004,7 +1004,6 @@ const defineClusterIcon = (cluster) => {
             pieLabel: n,
             pieLabelClass: 'marker-cluster-pie-label',
             pathClassFunc: (d) => {
-                console.log('test', d.data.key);
                 // let idx_num = _.findIndex(metadata.attribution.lookup, (el => el === d.data.key));
                 let idx_num = _.findIndex(metadata.attribution.sources, (el => el === d.data.key)); // fix looking to sources, because that the real data, lookup are the custom option text
 				if (idx_num === -1) {
@@ -1114,7 +1113,7 @@ const renderLegend = (database) => {
             pieClicked = false;
             activePie = null;
             if (document.getElementById(id)) {
-                document.getElementById(id).remove(); 
+                document.getElementById(id).remove();
             }
             // eol
             let selectedVal = this.value.split('$')[0],
@@ -1145,7 +1144,7 @@ const renderLegend = (database) => {
     $('#legend').append('<hr>');
     let legenditems = legenddiv.selectAll('.legenditem')
         .data(data);
-   
+
     // create new css for the indicators, if there was color setup
     createCss(metadata.fields[categoryField]);
     // let ind = (cfg.shapefile) ? "indicator" : "";
@@ -1187,18 +1186,18 @@ const renderLegend = (database) => {
             // }
             // if (cfg.shapefile) {
                 if (document.getElementById(id)) {
-                    document.getElementById(id).remove(); 
+                    document.getElementById(id).remove();
                 }
                 let style = document.createElement('style');
                 style.type = 'text/css';
                 style.id = id;
                 style.innerHTML = '.indicator{ background-color: #222; pointer-events : none; }.indicator:before{ font-family: "FontAwesome"; font-weight: 900; padding-right: 10px; content: "\\f057"; }';
                 document.getElementsByTagName('head')[0].appendChild(style);
-                
+
                 if ($(this).hasClass('active-indicator')) {
                     $(this).removeClass('active-indicator');
                     $(this).addClass('indicator');
-                    document.getElementById(id).remove(); 
+                    document.getElementById(id).remove();
                     if ($('.active-indicator').length > 1) {
                         // let active = $('.active-indicator').attr('class').split(' ')[0];
                         $('.active-indicator').attr('class').split(' ')[0];
@@ -1229,7 +1228,7 @@ const renderLegend = (database) => {
 const createCss = (conf) => {
     let id = 'css-dynamic-color';
     if (document.getElementById(id)) {
-        document.getElementById(id).remove(); 
+        document.getElementById(id).remove();
     }
 
     if (conf.color !== undefined && conf.color.length > 0) {
@@ -1248,7 +1247,7 @@ const createCss = (conf) => {
 const getFilterData = () => {
     let selects = ["1", "2", "3", "4", "5"];
     let deletes = [];
-    
+
     // if (!cfg.shapefile) {
     //     $('.inactive-legend').each(function() {
     //         let inactive = $(this).attr('class').split(' ')[0];
@@ -1320,7 +1319,7 @@ const refreshLayer = (dbs) => {
         activePoly = null;
         popupPoly = false;
         info.update(null);
-        // eol reset popup 
+        // eol reset popup
         setPolygonMap(geojson);
     }
 
@@ -1348,17 +1347,17 @@ const changeValue = (database, deletes) => {
             // new method to delete beacuse of multipe answer
             deletes.forEach(d => {
                 if (x.properties[iconField].toLowerCase().includes(d.toLowerCase())) {
-                    x.properties.status = "inactive"; 
+                    x.properties.status = "inactive";
                 }
             });
-            if (activeLegend !== null 
-                && x.properties[iconField].toLowerCase().includes(activeLegend.toLowerCase()) 
+            if (activeLegend !== null
+                && x.properties[iconField].toLowerCase().includes(activeLegend.toLowerCase())
                 && x.properties[iconField].includes('|')
             ) {
                 x.properties.status = "active";
             }
             // eol new method to delete beacuse of multipe answer
-            
+
             // old method
             // if (deletes.indexOf(x.properties[iconField]) >= 0) {
             //     x.properties.status = "inactive";

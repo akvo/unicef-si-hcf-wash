@@ -39,7 +39,6 @@ const focusTo = () => {
 
 const focusNormal = () => {
     let latlng = JSON.parse(localStorage.getItem('configs')).center;
-    console.log(latlng);
     goToView(new L.LatLng(latlng[0], latlng[1]), 7);
 };
 
@@ -76,7 +75,6 @@ const jqUI = () => {
         },
         select: (event, ui) => {
             // $("#find").val(ui.item[ui.item.searchKey]);
-            console.log(ui.item);
             $("#find").val(ui.item[ui.item.popup]);
             return false;
         }
