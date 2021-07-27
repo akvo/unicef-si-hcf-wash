@@ -1404,7 +1404,7 @@ return [
           "question" => "How is waste water (grey water) disposed from the facility?",
           "code" => "Sewer system",
           "text" => "Sewer system",
-          "color" => "#104826",
+          "color" => "#940424",
           "order" => 1,
         ],
         [
@@ -1412,7 +1412,7 @@ return [
           "question" => "How is waste water (grey water) disposed from the facility?",
           "code" => "Septic tank",
           "text" => "Septic tank",
-          "color" => "#1C693E",
+          "color" => "#C7103A",
           "order" => 2,
         ],
         [
@@ -1420,7 +1420,7 @@ return [
           "question" => "How is waste water (grey water) disposed from the facility?",
           "code" => "Soakage pit",
           "text" => "Soakage pit",
-          "color" => "#258350",
+          "color" => "#F15D5A",
           "order" => 3,
         ],
         [
@@ -1428,7 +1428,7 @@ return [
           "question" => "How is waste water (grey water) disposed from the facility?",
           "code" => "Sink",
           "text" => "Sink",
-          "color" => "#60BE76",
+          "color" => "#F48677",
           "order" => 4,
         ],
         [
@@ -1436,7 +1436,7 @@ return [
           "question" => "How is waste water (grey water) disposed from the facility?",
           "code" => "Rubble drain",
           "text" => "Rubble drain",
-          "color" => "#7EC781",
+          "color" => "#F8AC9D",
           "order" => 5,
         ],
         [
@@ -1444,7 +1444,7 @@ return [
           "question" => "How is waste water (grey water) disposed from the facility?",
           "code" => "Do not know",
           "text" => "Do not know",
-          "color" => "#F7944D",
+          "color" => "#99681F",
           "order" => 6,
         ],
         [
