@@ -218,7 +218,7 @@ class SigWashCovid {
         this.data.properties.attributes.forEach((x) => {
           // look data into lookup (replaced text)
           let lookupValue = data.properties[x.id];
-          if (!data.properties[x.id].includes("|")) {
+          if (!x.multiple) {
             const sourceIndex = x.sources.indexOf(data.properties[x.id]);
             lookupValue = sourceIndex === -1 ? lookupValue : x.lookup[sourceIndex];
           }

@@ -1,4 +1,5 @@
 import 'leaflet';
+import indicatorGroups from './static/indicator-groups.js';
 
 const custom = require('./custom.js');
 const _ = require('lodash');
@@ -1091,14 +1092,29 @@ const bakeThePie = (options) => {
 }
 
 /*Function for generating a legend with the same categories as in the clusterPie*/
-const renderLegend = (database) => {
+const renderLegend = (database, indicatorGroupSelected=null) => {
     let id = 'css-single-click'; // custom css form single selection
     let data = d3.entries(metadata.fields[categoryField].lookup),
         legenddiv = d3.select('body').append('div')
             .attr('id', 'legend');
     let indicators = d3.entries(metadata.attributes);
+
+    //* Render Indicator groups
+    indicatorGroupSelected = indicatorGroupSelected ? indicatorGroupSelected : "water";
+    $('#legend').append('<select class="custom-select" id="indicators-group" style="margin-bottom:10px;"></select>');
+    indicatorGroups.forEach((s) => {
+      let selected = '';
+      if (s.id === indicatorGroupSelected) {
+        selected = 'selected';
+      }
+      $('#indicators-group').append('<option value="' + s.id + '"' + selected + '>' + s.group + '</options>');
+    });
+
+    //* Render Indicators
+    const indicatorGroupActive = indicatorGroups.find(x => x.id === indicatorGroupSelected);
     $('#legend').append('<select class="custom-select" id="indicators"></select>');
     indicators = indicators.filter(x => x.value.type !== 'text');
+    indicators = indicators.filter(x => indicatorGroupActive.childrens.includes(x.value.qid));
     indicators.forEach((s) => {
         let selected = '';
         if (s.value.id == metadata.attribution.id) {
@@ -1106,6 +1122,32 @@ const renderLegend = (database) => {
         }
         $('#indicators').append('<option value="' + s.value.id + '$' + s.value.type + '"' + selected + '>' + s.value.name + '</options>');
     });
+
+    //* Indicator Group and Indicators dropdown change handle
+    let igdropdown = d3.select('#indicators-group');
+    igdropdown
+        .on('change', function (e) {
+          const igActive = indicatorGroups.find(x => x.id === this.value);
+          const ind = d3.entries(metadata.attributes).filter(x => igActive.childrens.includes(x.value.qid));
+          let selectedVal = ind[0].value.id,
+              selectedInd = selectedVal.split('-');
+          pieClicked = false;
+          activePie = null;
+          if (document.getElementById(id)) {
+            document.getElementById(id).remove();
+          }
+          let dbs = JSON.parse(localStorage.getItem('data'));
+          dbs.properties.attribution = dbs.properties.fields[selectedVal];
+          localStorage.setItem('data', JSON.stringify(dbs));
+          $('#bar-legend').remove();
+          localStorage.removeItem('chartPos');
+          localStorage.removeItem('filterPos');
+          legenddiv.remove();
+          categoryField = selectedVal;
+          iconField = categoryField;
+          changeValue(dbs, []);
+          renderLegend(dbs, this.value);
+        });
     let dropdown = d3.select('#indicators');
     dropdown
         .on('change', function (a) {
@@ -1113,7 +1155,7 @@ const renderLegend = (database) => {
             pieClicked = false;
             activePie = null;
             if (document.getElementById(id)) {
-                document.getElementById(id).remove();
+              document.getElementById(id).remove();
             }
             // eol
             let selectedVal = this.value.split('$')[0],
@@ -1129,7 +1171,7 @@ const renderLegend = (database) => {
                 categoryField = selectedVal;
                 iconField = categoryField;
                 changeValue(dbs, []);
-                renderLegend(dbs);
+                renderLegend(dbs, indicatorGroupSelected);
             } else {
                 $('#piechart-tmp').remove();
                 createHistogram();
@@ -1138,13 +1180,13 @@ const renderLegend = (database) => {
                 changeValue(dbs, []);
             }
         });
+
     let heading = legenddiv.append('div')
         .classed('legendheading', true)
         .text(metadata.attribution.name);
     $('#legend').append('<hr>');
     let legenditems = legenddiv.selectAll('.legenditem')
         .data(data);
-
     // create new css for the indicators, if there was color setup
     createCss(metadata.fields[categoryField]);
     // let ind = (cfg.shapefile) ? "indicator" : "";
