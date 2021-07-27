@@ -409,10 +409,18 @@ return [
         [
           "question_id" =>  285750980,
           "question" => "What is the main drinking water source in the facility?",
+          "code" => "Protected spring",
+          "text" => null,
+          "color" => "#fff999",
+          "order" => 7,
+        ],
+        [
+          "question_id" =>  285750980,
+          "question" => "What is the main drinking water source in the facility?",
           "code" => "Unprotected spring",
           "text" => null,
           "color" => "#F8F27D",
-          "order" => 7,
+          "order" => 8,
         ],
         [
           "question_id" =>  285750980,
@@ -420,7 +428,7 @@ return [
           "code" => "Surface water (river, stream, dam, lake, pond)",
           "text" => "Surface water",
           "color" => "#FFD54E",
-          "order" => 8,
+          "order" => 9,
         ],
         // EOL What is the main drinking water source in the facility?
 
@@ -913,6 +921,14 @@ return [
         [
           "question_id" =>  281741006,
           "question" => "What type of toilets does the facility have/use?",
+          "code" => "Flush to sewer",
+          "text" => null,
+          "color" => "#004826",
+          "order" => 1,
+        ],
+        [
+          "question_id" =>  281741006,
+          "question" => "What type of toilets does the facility have/use?",
           "code" => "Flush to septic tank",
           "text" => null,
           "color" => "#00693E",
@@ -937,31 +953,6 @@ return [
         [
           "question_id" =>  281741006,
           "question" => "What type of toilets does the facility have/use?",
-          "code" => "Ventilated improved pit toilet",
-          "text" => null,
-          "color" => "#CDE6C0",
-          "order" => 6,
-        ],
-        [
-          "question_id" =>  281741006,
-          "question" => "What type of toilets does the facility have/use?",
-          "code" => "Flush to sewer",
-          "text" => null,
-          "color" => "#004826",
-          "order" => 1,
-        ],
-        [
-          "question_id" =>  281741006,
-          "question" => "What type of toilets does the facility have/use?",
-          "code" => "Pit toilet without slab",
-          "text" => null,
-          "color" => "#F7944D",
-          "order" => 7,
-        ],
-
-        [
-          "question_id" =>  281741006,
-          "question" => "What type of toilets does the facility have/use?",
           "code" => "Compost toilet",
           "text" => null,
           "color" => "#7EC782",
@@ -970,10 +961,34 @@ return [
         [
           "question_id" =>  281741006,
           "question" => "What type of toilets does the facility have/use?",
+          "code" => "Hanging toilet",
+          "text" => null,
+          "color" => "#90d192",
+          "order" => 6,
+        ],
+        [
+          "question_id" =>  281741006,
+          "question" => "What type of toilets does the facility have/use?",
+          "code" => "Ventilated improved pit toilet",
+          "text" => null,
+          "color" => "#CDE6C0",
+          "order" => 7,
+        ],
+        [
+          "question_id" =>  281741006,
+          "question" => "What type of toilets does the facility have/use?",
+          "code" => "Pit toilet without slab",
+          "text" => null,
+          "color" => "#F7944D",
+          "order" => 8,
+        ],
+        [
+          "question_id" =>  281741006,
+          "question" => "What type of toilets does the facility have/use?",
           "code" => "NA",
           "text" => "Unknown",
           "color" => "#666",
-          "order" => 8,
+          "order" => 9,
         ],
         // EOL What type of toilets does the facility have/use?
 
@@ -1026,8 +1041,8 @@ return [
         [
           "question_id" =>  259791034,
           "question" => "How are sharps and disposable syringes that have been used stored?",
-          "code" => "Plastic Bag",
-          "text" => null,
+          "code" => "Plastic bag",
+          "text" => "Plastic bag",
           "color" => "#F8AC9D",
           "order" => 3,
         ],
