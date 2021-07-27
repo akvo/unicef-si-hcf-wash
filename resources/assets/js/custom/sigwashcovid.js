@@ -58,17 +58,17 @@ class SigWashCovid {
       let avg = sum / filterData.length;
       return Math.round((avg + Number.EPSILON) * 100) / 100;
     };
-  
+
     generateBarChartData(filterIndex) {
       let x_axis, y_axis = [];
       // x axis [name, province]
       x_axis = [
-        this.titleCase(this.getLocation('name')), 
-        // this.titleCase(this.getLocation('type')), 
+        this.titleCase(this.getLocation('name')),
+        // this.titleCase(this.getLocation('type')),
         this.titleCase(this.getLocation('area')),
         this.titleCase(this.getLocation('province')),
       ];
-      
+
       // y axis
       y_axis.push(this.properties[filterIndex]);
       // y_axis.push(this.calculateAvg("L", filterIndex, 'type'));
@@ -76,7 +76,7 @@ class SigWashCovid {
       y_axis.push(this.calculateAvg("L", filterIndex, 'province'));
       return {x : x_axis, y: y_axis}
     };
-  
+
     createBarChart(id, title, axis) {
       let element = echarts.init(document.getElementById(id));
       let option = {
@@ -215,32 +215,35 @@ class SigWashCovid {
         );
 
         // append basic information
-        this.data.properties.attributes.forEach(x => {
+        this.data.properties.attributes.forEach((x) => {
+          // look data into lookup (replaced tex)
+          const sourceIndex = x.sources.indexOf(data.properties[x.id]);
+          const lookupValue = x.lookup[sourceIndex];
           $("#basic-info").append('\
             <div>\
-              <b>'+x.name+' :</b>  '+data.properties[x.id]+'\
+              <b>'+x.name+' :</b>  '+lookupValue+'\
             </div>\
             <hr>\
           ');
         });
         // eol basic information
-        
+
         // 281751020|What is the estimated number of patients visiting this facility in a typical day? : AF
         this.createBarChart("patient-visit-cart", "Number of patients visiting Facility Mean Comparisons", this.generateBarChartData("AF"));
         // 267650916|Total number of beds in the Health Care Facility : GI
         this.createBarChart("bed-total-cart", "Number of beds in Facility\nMean Comparisons", this.generateBarChartData("GI"));
         // 283700916|Total number of staff : GJ
-        this.createBarChart("staff-total-cart", "Number of staff in Facility\nMean Comparisons", this.generateBarChartData("GJ"));        
+        this.createBarChart("staff-total-cart", "Number of staff in Facility\nMean Comparisons", this.generateBarChartData("GJ"));
         // 279790917|Calculate the Occupancy Rate %: (Number of beds occupied at the moment) divided by (total number of beds in the facility), multiplied by 100 : GK
         this.createBarChart("occupancy-cart", "Occupancy Rate (%) in Facility Mean Comparisons", this.generateBarChartData("GK"));
         // 289820918|Calculate the water demand in liters: (Number of patients and staff at the moment) multiplied by 150 : GL
-        this.createBarChart("water-demand-cart", "Water demand (liters) in Facility\nMean Comparisons", this.generateBarChartData("GL"));        
+        this.createBarChart("water-demand-cart", "Water demand (liters) in Facility\nMean Comparisons", this.generateBarChartData("GL"));
         // 259820916|Calculate the expected grey water: Take the answer from question 4 and multiply it by .8 : GM
-        this.createBarChart("grey-water-cart", "Expected grey water in Facility\nMean Comparisons", this.generateBarChartData("GM"));        
+        this.createBarChart("grey-water-cart", "Expected grey water in Facility\nMean Comparisons", this.generateBarChartData("GM"));
         // 285760916|Calculate the expected black water: Take the answer from question 4 and multiply it by .2 : GN
-        this.createBarChart("black-water-cart", "Expected black water in Facility\nMean Comparisons", this.generateBarChartData("GN"));        
+        this.createBarChart("black-water-cart", "Expected black water in Facility\nMean Comparisons", this.generateBarChartData("GN"));
         // 263740916|Calculate the expected liters of fecal matter in black water per day: (Number of patients and staff at the moment) multiplied by .5 : GO
-        this.createBarChart("fecal-matter-cart", "Expected fecal mater in black water per day\nMean Comparisons", this.generateBarChartData("GO"));        
+        this.createBarChart("fecal-matter-cart", "Expected fecal mater in black water per day\nMean Comparisons", this.generateBarChartData("GO"));
 
         $("#photo-temp").html(this.photos);
         return;
