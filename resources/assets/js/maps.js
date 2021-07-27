@@ -946,9 +946,9 @@ const defineFeature = (feature, latlng) => {
         let categoryVal = feature.properties[categoryField],
             iconVal = feature.properties[iconField];
         let idx_num = _.findIndex(metadata.attribution.lookup, (el => el === categoryVal));
-		if (idx_num === -1) {
-			idx_num = "undefined";
-		}
+        if (idx_num === -1) {
+          idx_num = "undefined";
+        }
         let myClass = 'marker category-' + idx_num + ' icon-' + idx_num;
         let iconSize = null;
         if (!clustered) {
@@ -1006,9 +1006,9 @@ const defineClusterIcon = (cluster) => {
             pathClassFunc: (d) => {
                 // let idx_num = _.findIndex(metadata.attribution.lookup, (el => el === d.data.key));
                 let idx_num = _.findIndex(metadata.attribution.sources, (el => el === d.data.key)); // fix looking to sources, because that the real data, lookup are the custom option text
-				if (idx_num === -1) {
-					idx_num = "undefined";
-				}
+                if (idx_num === -1) {
+                  idx_num = "undefined";
+                }
                 return "category-" + idx_num;
             },
             pathTitleFunc: (d) => {
