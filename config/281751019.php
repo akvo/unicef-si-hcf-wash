@@ -108,6 +108,30 @@ return [
           "order" => 7,
         ],
         [
+          "question_id" => 281770994,
+          "question" => "Do all toilets have doors which can lock (or for which a key is available at any time)?",
+          "text" => "Toilets have doors which can lock",
+          "type" => "option",
+          "default" => 0,
+          "order" => 7,
+        ],
+        [
+          "question_id" => 281760990,
+          "question" => "Does the toilets have any major holes/damages in the infrastructure?",
+          "text" => "Toilet have any major holes/damages in the infrastructure",
+          "type" => "option",
+          "default" => 0,
+          "order" => 7,
+        ],
+        [
+          "question_id" => 275690991,
+          "question" => "Do toilet doors lock from the inside?",
+          "text" => "Toilet doors lock from the inside",
+          "type" => "option",
+          "default" => 0,
+          "order" => 7,
+        ],
+        [
           "question_id" => 285741007,
           "question" => "Does the toilet provide separate bins for menstrual waste?",
           "text" => "Toilet provide separate bins for menstrual waste",
@@ -164,6 +188,14 @@ return [
           "order" => 14,
         ],
         [
+          "question_id" => 281760994,
+          "question" => "What is the type of toilet available?",
+          "text" => "Type of toilet available",
+          "type" => "multiple",
+          "default" => 0,
+          "order" => 14,
+        ],
+        [
           "question_id" => 285750992,
           "question" => "Is that toilet/latrine functional?",
           "text" => "Toilet / latrine functional",
@@ -176,6 +208,14 @@ return [
           "question" => "Is the toilet/latrine accessible to women in labour?",
           "text" => "Toilet / latrine accessible to women in labour",
           "type" => "option",
+          "default" => 0,
+          "order" => 16,
+        ],
+        [
+          "question_id" => 275710928,
+          "question" => "Does that toilet/latrine meet the following privacy qualifications? (check all that apply):",
+          "text" => "Toilet / latrine meet the following privacy qualifications",
+          "type" => "multiple",
           "default" => 0,
           "order" => 16,
         ],
@@ -207,6 +247,14 @@ return [
           "question_id" => 281741010,
           "question" => "Are the basic sterile resources required for a clean delivery available in the delivery room?",
           "text" => "Basic sterile resources required for a clean delivery available in the delivery room",
+          "type" => "option",
+          "default" => 0,
+          "order" => 20,
+        ],
+        [
+          "question_id" => 267630986,
+          "question" => "Is there a functioning autoclave for sterilization in the facility?",
+          "text" => "Functioning autoclave for sterilization available",
           "type" => "option",
           "default" => 0,
           "order" => 20,
@@ -252,10 +300,34 @@ return [
           "order" => 25,
         ],
         [
+          "question_id" => 271861037,
+          "question" => "Are wastes buried and burned? (observe the site of buried wastes)",
+          "text" => "Wastes buried and burned",
+          "type" => "option",
+          "default" => 0,
+          "order" => 25,
+        ],
+        [
           "question_id" => 273641025,
           "question" => "Are there hand hygiene stations (with water and soap or alcohol based hand rub) available in or near all the toilet?",
           "text" => "Hand hygiene stations available in or near all the toilet",
           "type" => "option",
+          "default" => 0,
+          "order" => 26,
+        ],
+        [
+          "question_id" => 275690998,
+          "question" => "Do health care providers practice hand washing with soap and water or alcohol hand rub at key points of care?",
+          "text" => "Health care providers practice hand washing",
+          "type" => "option",
+          "default" => 0,
+          "order" => 26,
+        ],
+        [
+          "question_id" => 271861033,
+          "question" => "How is waste water (grey water) disposed from the facility?",
+          "text" => "How is waste water (grey water) disposed",
+          "type" => "multiple",
           "default" => 0,
           "order" => 26,
         ],
@@ -1233,6 +1305,276 @@ return [
           "order" => 3,
         ],
         // EOL Access to safe drinking water
+
+        // Do all toilets have doors which can lock (or for which a key is available at any time)?
+        [
+          "question_id" =>  281770994,
+          "question" => "Do all toilets have doors which can lock (or for which a key is available at any time)?",
+          "code" => "Yes",
+          "text" => "Yes",
+          "color" => "#2EA745",
+          "order" => 1,
+        ],
+        [
+          "question_id" =>  281770994,
+          "question" => "Do all toilets have doors which can lock (or for which a key is available at any time)?",
+          "code" => "No",
+          "text" => "No",
+          "color" => "#DC3545",
+          "order" => 2,
+        ],
+        // EOL Do all toilets have doors which can lock (or for which a key is available at any time)?
+
+        // Do toilet doors lock from the inside?
+        [
+          "question_id" =>  281760990,
+          "question" => "Do toilet doors lock from the inside?",
+          "code" => "Yes",
+          "text" => "Yes",
+          "color" => "#2EA745",
+          "order" => 1,
+        ],
+        [
+          "question_id" =>  281760990,
+          "question" => "Do toilet doors lock from the inside?",
+          "code" => "No",
+          "text" => "No",
+          "color" => "#DC3545",
+          "order" => 2,
+        ],
+        // EOL Do toilet doors lock from the inside?
+
+        // Does the toilets have any major holes/damages in the infrastructure?
+        [
+          "question_id" =>  275690991,
+          "question" => "Does the toilets have any major holes/damages in the infrastructure?",
+          "code" => "Yes",
+          "text" => "Yes",
+          "color" => "#2EA745",
+          "order" => 1,
+        ],
+        [
+          "question_id" =>  275690991,
+          "question" => "Does the toilets have any major holes/damages in the infrastructure?",
+          "code" => "No",
+          "text" => "No",
+          "color" => "#DC3545",
+          "order" => 2,
+        ],
+        // EOL Does the toilets have any major holes/damages in the infrastructure?
+
+        // Do health care providers practice hand washing with soap and water or alcohol hand rub at key points of care?
+        [
+          "question_id" =>  275690998,
+          "question" => "Do health care providers practice hand washing with soap and water or alcohol hand rub at key points of care?",
+          "code" => "Yes",
+          "text" => "Yes",
+          "color" => "#2EA745",
+          "order" => 1,
+        ],
+        [
+          "question_id" =>  275690998,
+          "question" => "Do health care providers practice hand washing with soap and water or alcohol hand rub at key points of care?",
+          "code" => "No",
+          "text" => "No",
+          "color" => "#DC3545",
+          "order" => 2,
+        ],
+        // EOL Do health care providers practice hand washing with soap and water or alcohol hand rub at key points of care?
+
+        // Multiple Answer
+        // How is waste water (grey water) disposed from the facility?
+        [
+          "question_id" =>  271861033,
+          "question" => "How is waste water (grey water) disposed from the facility?",
+          "code" => "Sewer system",
+          "text" => "Sewer system",
+          "color" => "#104826",
+          "order" => 1,
+        ],
+        [
+          "question_id" =>  271861033,
+          "question" => "How is waste water (grey water) disposed from the facility?",
+          "code" => "Septic tank",
+          "text" => "Septic tank",
+          "color" => "#1C693E",
+          "order" => 2,
+        ],
+        [
+          "question_id" =>  271861033,
+          "question" => "How is waste water (grey water) disposed from the facility?",
+          "code" => "Soakage pit",
+          "text" => "Soakage pit",
+          "color" => "#258350",
+          "order" => 3,
+        ],
+        [
+          "question_id" =>  271861033,
+          "question" => "How is waste water (grey water) disposed from the facility?",
+          "code" => "Sink",
+          "text" => "Sink",
+          "color" => "#60BE76",
+          "order" => 4,
+        ],
+        [
+          "question_id" =>  271861033,
+          "question" => "How is waste water (grey water) disposed from the facility?",
+          "code" => "Rubble drain",
+          "text" => "Rubble drain",
+          "color" => "#7EC781",
+          "order" => 5,
+        ],
+        [
+          "question_id" =>  271861033,
+          "question" => "How is waste water (grey water) disposed from the facility?",
+          "code" => "Do not know",
+          "text" => "Do not know",
+          "color" => "#F7944D",
+          "order" => 6,
+        ],
+        [
+          "question_id" =>  271861033,
+          "question" => "How is waste water (grey water) disposed from the facility?",
+          "code" => "NA",
+          "text" => "Unknown",
+          "color" => "#666666",
+          "order" => 7,
+        ],
+        // EOL How is waste water (grey water) disposed from the facility?
+
+        // Are wastes buried and burned? (observe the site of buried wastes)
+        [
+          "question_id" =>  271861037,
+          "question" => "Are wastes buried and burned? (observe the site of buried wastes)",
+          "code" => "Yes",
+          "text" => "Yes",
+          "color" => "#2EA745",
+          "order" => 1,
+        ],
+        [
+          "question_id" =>  271861037,
+          "question" => "Are wastes buried and burned? (observe the site of buried wastes)",
+          "code" => "No",
+          "text" => "No",
+          "color" => "#DC3545",
+          "order" => 2,
+        ],
+        // EOL Are wastes buried and burned? (observe the site of buried wastes)
+
+        // Is there a functioning autoclave for sterilization in the facility?
+        [
+          "question_id" =>  267630986,
+          "question" => "Is there a functioning autoclave for sterilization in the facility?",
+          "code" => "Yes",
+          "text" => "Yes",
+          "color" => "#2EA745",
+          "order" => 1,
+        ],
+        [
+          "question_id" =>  267630986,
+          "question" => "Is there a functioning autoclave for sterilization in the facility?",
+          "code" => "No",
+          "text" => "No",
+          "color" => "#DC3545",
+          "order" => 2,
+        ],
+        [
+          "question_id" =>  267630986,
+          "question" => "Is there a functioning autoclave for sterilization in the facility?",
+          "code" => "NA",
+          "text" => "Unknown",
+          "color" => "#666",
+          "order" => 3,
+        ],
+        // EOL Is there a functioning autoclave for sterilization in the facility?
+
+        // Multiple Answer
+        // What is the type of toilet available?
+        [
+          "question_id" =>  281760994,
+          "question" => "What is the type of toilet available?",
+          "code" => "Flush to sewer",
+          "text" => "Flush to sewer",
+          "color" => "#004826",
+          "order" => 1,
+        ],
+        [
+          "question_id" =>  281760994,
+          "question" => "What is the type of toilet available?",
+          "code" => "Flush to septic tank",
+          "text" => "Flush to septic tank",
+          "color" => "#00693E",
+          "order" => 2,
+        ],
+        [
+          "question_id" =>  281760994,
+          "question" => "What is the type of toilet available?",
+          "code" => "Flush to pit",
+          "text" => "Flush to pit",
+          "color" => "#008350",
+          "order" => 3,
+        ],
+        [
+          "question_id" =>  281760994,
+          "question" => "What is the type of toilet available?",
+          "code" => "Pit toilet to slab",
+          "text" => "Pit toilet to slab",
+          "color" => "#60BE76",
+          "order" => 4,
+        ],
+        [
+          "question_id" =>  281760994,
+          "question" => "What is the type of toilet available?",
+          "code" => "Flush to don't know where",
+          "text" => "Flush to don't know where",
+          "color" => "#7EC782",
+          "order" => 5,
+        ],
+        [
+          "question_id" =>  281760994,
+          "question" => "What is the type of toilet available?",
+          "code" => "Pit toilet without slab",
+          "text" => "Pit toilet without slab",
+          "color" => "#F7944D",
+          "order" => 6,
+        ],
+        [
+          "question_id" =>  281760994,
+          "question" => "What is the type of toilet available?",
+          "code" => "NA",
+          "text" => "Unknown",
+          "color" => "#666",
+          "order" => 7,
+        ],
+        // EOL What is the type of toilet available?
+
+        // Multiple Answer
+        // Does that toilet/latrine meet the following privacy qualifications? (check all that apply):
+        [
+          "question_id" =>  275710928,
+          "question" => "Does that toilet/latrine meet the following privacy qualifications? (check all that apply):",
+          "code" => "The toilet/latrine area has a lock",
+          "text" => null,
+          "color" => "#004826",
+          "order" => 1,
+        ],
+        [
+          "question_id" =>  275710928,
+          "question" => "Does that toilet/latrine meet the following privacy qualifications? (check all that apply):",
+          "code" => "The toilet/latrine area has walls that inhibit others from seeing the person inside",
+          "text" => null,
+          "color" => "#00693E",
+          "order" => 2,
+        ],
+        [
+          "question_id" =>  275710928,
+          "question" => "Does that toilet/latrine meet the following privacy qualifications? (check all that apply):",
+          "code" => "NA",
+          "text" => "Unknown",
+          "color" => "#666",
+          "order" => 3,
+        ],
+        // EOL Does that toilet/latrine meet the following privacy qualifications? (check all that apply):
       ],
       "template" => [
         [
