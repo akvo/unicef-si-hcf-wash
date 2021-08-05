@@ -48,6 +48,7 @@ let appVersion = localStorage.getItem("app-version"),
   activePie = null,
   filterClicked = false,
   filterIndex = null,
+  secondFilters = [],
   metadata,
   clustered = true,
   cfg = [],
@@ -876,7 +877,7 @@ const renderSecondFilter = () => {
             "sf-" + index + "",
             "" + name + "-" + i,
             item.id,
-            item.type,
+            item.dtype,
             name
           );
         });
@@ -893,8 +894,9 @@ const renderSecondFilter = () => {
           "sf-" + index + "",
           "all",
           item.id,
-          item.type,
-          name
+          item.dtype,
+          name,
+          values
         );
       });
     $(".legend_" + index + "").click(function(e) {
@@ -921,7 +923,8 @@ const filterBySecondFilter = (
   dataId,
   key,
   filterType,
-  name
+  name,
+  options = []
 ) => {
   var dbs = JSON.parse(localStorage.getItem("data"));
   if (dataName === "options") {
@@ -931,16 +934,55 @@ const filterBySecondFilter = (
       $("#" + type + "-all").removeClass("enable-all");
       $("#" + type + "-all").text("Disable All");
       $("#" + type + "-all").attr("data-select", "remove");
+      if (secondFilters.find((x) => x.key === key)) {
+        // remove from global variable
+        secondFilters = secondFilters.filter((x) => x.key !== key);
+      }
     } else {
       $("#" + type + "-list > a").addClass("inactive");
       $("#" + type + "-all").addClass("enable-all");
       $("#" + type + "-all").text("Enable All");
       $("#" + type + "-all").attr("data-select", "add");
+      if (!secondFilters.find((x) => x.key === key)) {
+        // add to global variable
+        secondFilters.push({
+          key: key,
+          values: options.map((x) => x.value),
+        });
+      }
     }
   } else {
     $("#" + type + "-all").addClass("enable-all");
     $("#" + type + "-all").text("Enable All");
     $("#" + type + "-all").attr("data-select", "add");
+
+    if (!secondFilters.find((x) => x.key === key)) {
+      // add to global variable
+      secondFilters.push({
+        key: key,
+        values: [dataName],
+      });
+    } else {
+      // update global variable
+      let update = secondFilters.find((x) => x.key === key);
+      if (update.values.indexOf(dataName) === -1) {
+        // add to global variable
+        update.values = [...update.values, dataName];
+      } else {
+        // remove from global variable
+        update.values.splice(update.values.indexOf(dataName), 1);
+      }
+      secondFilters = secondFilters.filter((x) => x.key !== key);
+      if (update.values.length) {
+        secondFilters.push(update);
+      }
+    }
+  }
+  if (!secondFilters.find((x) => x.key === key)) {
+    $("#" + type + "-list > a").removeClass("inactive");
+    $("#" + type + "-all").removeClass("enable-all");
+    $("#" + type + "-all").text("Disable All");
+    $("#" + type + "-all").attr("data-select", "remove");
   }
 
   if (!cfg.shapefile) {
@@ -954,9 +996,17 @@ const filterBySecondFilter = (
           x.properties["status"] = "inactive";
         }
       } else {
-        let answer = x.properties[key].toLowerCase();
         // let condition = (filterType === 'cascade') ? answer.includes(dataName.toLowerCase()) : answer === dataName.toLowerCase();
+        let answer = x.properties[key].toLowerCase();
         let condition = answer.includes(dataName.toLowerCase());
+        // check if multiple
+        if (filterType === "cascade") {
+          const answers = answer.split("|");
+          condition = answers.find((x) => x === dataName.toLowerCase());
+        }
+        if (filterType === "option") {
+          condition = answer === dataName.toLowerCase();
+        }
         if (condition) {
           if (x.properties["status"] === "active") {
             x.properties["status"] = "inactive";
@@ -994,9 +1044,17 @@ const filterBySecondFilter = (
               y["status"] = "inactive";
             }
           } else {
-            let answer = y[key].toLowerCase();
             // let condition = (filterType === 'cascade') ? answer.includes(dataName.toLowerCase()) : answer === dataName.toLowerCase();
+            let answer = x.properties[key].toLowerCase();
             let condition = answer.includes(dataName.toLowerCase());
+            // check if multiple
+            if (filterType === "cascade") {
+              const answers = answer.split("|");
+              condition = answers.find((x) => x === dataName.toLowerCase());
+            }
+            if (filterType === "option") {
+              condition = answer === dataName.toLowerCase();
+            }
             if (condition) {
               if (y["status"] === "active") {
                 y["status"] = "inactive";
@@ -1265,19 +1323,19 @@ const renderLegend = (database, indicatorGroupSelected = null) => {
       .attr("id", "legend");
   let indicators = d3.entries(metadata.attributes);
 
-  //* Render Indicator groups
+  //* Render Indicator group
   indicatorGroupSelected = indicatorGroupSelected
     ? indicatorGroupSelected
     : "water";
   $("#legend").append(
-    '<select class="custom-select" id="indicators-group" style="margin-bottom:10px;"></select>'
+    '<select class="custom-select" id="indicator-group" style="margin-bottom:10px;"></select>'
   );
   indicatorGroups.forEach((s) => {
     let selected = "";
     if (s.id === indicatorGroupSelected) {
       selected = "selected";
     }
-    $("#indicators-group").append(
+    $("#indicator-group").append(
       '<option value="' + s.id + '"' + selected + ">" + s.group + "</options>"
     );
   });
@@ -1312,7 +1370,7 @@ const renderLegend = (database, indicatorGroupSelected = null) => {
   });
 
   //* Indicator Group and Indicators dropdown change handle
-  let igdropdown = d3.select("#indicators-group");
+  let igdropdown = d3.select("#indicator-group");
   igdropdown.on("change", function(e) {
     const igActive = indicatorGroups.find((x) => x.id === this.value);
     const ind = d3
@@ -1599,10 +1657,15 @@ const refreshLayer = (dbs) => {
 };
 
 const changeValue = (database, deletes) => {
+  console.log(secondFilters);
   var dbs = JSON.parse(localStorage.getItem("data"));
   if (!cfg.shapefile) {
     dbs["features"] = $.map(dbs.features, (x) => {
       x = x;
+      // * Filter by secondFilters if active, active data where is not on second filter list
+      if (secondFilters.length) {
+        console.log(x);
+      }
       x.properties.status = "active";
       // new method to delete beacuse of multipe answer
       deletes.forEach((d) => {
