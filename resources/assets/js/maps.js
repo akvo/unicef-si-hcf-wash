@@ -951,6 +951,7 @@ const filterBySecondFilter = (
         // add to global variable
         secondFilters.push({
           key: key,
+          keyStatus: keyStatus,
           values: options.map((x) => x.text.toLowerCase()),
           type: filterType,
         });
@@ -965,6 +966,7 @@ const filterBySecondFilter = (
       // add to global variable
       secondFilters.push({
         key: key,
+        keyStatus: keyStatus,
         values: [dataName],
         type: filterType,
       });
@@ -978,6 +980,7 @@ const filterBySecondFilter = (
         // remove from global variable
         update.values.splice(update.values.indexOf(dataName), 1);
       }
+      // replace with updated value
       secondFilters = secondFilters.filter((x) => x.key !== key);
       if (update.values.length) {
         secondFilters.push(update);
@@ -1039,11 +1042,11 @@ const filterBySecondFilter = (
                 });
                 if (check) {
                   x.properties["status"] = "inactive";
-                  x.properties[sf.key + "_status"] = "inactive";
+                  x.properties[sf.keyStatus] = "inactive";
                   $("#" + dataId).addClass("inactive");
                 } else {
                   x.properties["status"] = "active";
-                  x.properties[sf.key + "_status"] = "active";
+                  x.properties[sf.keyStatus] = "active";
                   $("#" + dataId).removeClass("inactive");
                 }
               });
@@ -1061,7 +1064,7 @@ const filterBySecondFilter = (
               }
               if (!condition) {
                 sfTmp.forEach((sf) => {
-                  if (x.properties[sf.key + "_status"] === "inactive") {
+                  if (x.properties[sf.keyStatus] === "inactive") {
                     x.properties[keyStatus] = "inactive";
                   } else {
                     x.properties[keyStatus] = "active";
@@ -1091,11 +1094,11 @@ const filterBySecondFilter = (
                 });
                 if (check) {
                   x.properties["status"] = "inactive";
-                  x.properties[sf.key + "_status"] = "inactive";
+                  x.properties[sf.keyStatus] = "inactive";
                   $("#" + dataId).addClass("inactive");
                 } else {
                   x.properties["status"] = "active";
-                  x.properties[sf.key + "_status"] = "active";
+                  x.properties[sf.keyStatus] = "active";
                   $("#" + dataId).removeClass("inactive");
                 }
               });
@@ -1163,11 +1166,11 @@ const filterBySecondFilter = (
                     });
                     if (check) {
                       y["status"] = "inactive";
-                      y[sf.key + "_status"] = "inactive";
+                      y[sf.keyStatus] = "inactive";
                       $("#" + dataId).addClass("inactive");
                     } else {
                       y["status"] = "active";
-                      y[sf.key + "_status"] = "active";
+                      y[sf.keyStatus] = "active";
                       $("#" + dataId).removeClass("inactive");
                     }
                   });
@@ -1185,7 +1188,7 @@ const filterBySecondFilter = (
                   }
                   if (!condition) {
                     sfTmp.forEach((sf) => {
-                      if (y[sf.key + "_status"] === "inactive") {
+                      if (y[sf.keyStatus] === "inactive") {
                         y[keyStatus] = "inactive";
                       } else {
                         y[keyStatus] = "active";
@@ -1215,11 +1218,11 @@ const filterBySecondFilter = (
                     });
                     if (check) {
                       y["status"] = "inactive";
-                      y[sf.key + "_status"] = "inactive";
+                      y[sf.keyStatus] = "inactive";
                       $("#" + dataId).addClass("inactive");
                     } else {
                       y["status"] = "active";
-                      y[sf.key + "_status"] = "active";
+                      y[sf.keyStatus] = "active";
                       $("#" + dataId).removeClass("inactive");
                     }
                   });
@@ -1823,12 +1826,25 @@ const refreshLayer = (dbs) => {
 };
 
 const changeValue = (database, deletes) => {
-  console.log(secondFilters);
   var dbs = JSON.parse(localStorage.getItem("data"));
   if (!cfg.shapefile) {
     dbs["features"] = $.map(dbs.features, (x) => {
       x = x;
-      x.properties.status = "active";
+
+      //* check if there second filter active
+      let check = false;
+      if (secondFilters.length) {
+        secondFilters.forEach((sf) => {
+          if (x.properties[sf.keyStatus] === "inactive") {
+            check = true;
+          }
+        });
+      }
+      if (!check) {
+        x.properties.status = "active";
+      }
+      //* eol check if there second filter active
+
       // new method to delete beacuse of multipe answer
       deletes.forEach((d) => {
         if (x.properties[iconField].toLowerCase().includes(d.toLowerCase())) {
