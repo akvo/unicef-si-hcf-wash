@@ -1,3 +1,4 @@
+import { data } from "jquery";
 import "leaflet";
 import indicatorGroups from "./static/indicator-groups.js";
 
@@ -878,7 +879,8 @@ const renderSecondFilter = () => {
             "" + name + "-" + i,
             item.id,
             item.dtype,
-            name
+            name,
+            values
           );
         });
     });
@@ -926,6 +928,8 @@ const filterBySecondFilter = (
   name,
   options = []
 ) => {
+  dataName = dataName.toLowerCase();
+  let keyStatus = key + "_status";
   var dbs = JSON.parse(localStorage.getItem("data"));
   if (dataName === "options") {
     var dataSelection = $("#" + type + "-all").attr("data-select");
@@ -947,7 +951,8 @@ const filterBySecondFilter = (
         // add to global variable
         secondFilters.push({
           key: key,
-          values: options.map((x) => x.value),
+          values: options.map((x) => x.text.toLowerCase()),
+          type: filterType,
         });
       }
     }
@@ -961,6 +966,7 @@ const filterBySecondFilter = (
       secondFilters.push({
         key: key,
         values: [dataName],
+        type: filterType,
       });
     } else {
       // update global variable
@@ -984,49 +990,124 @@ const filterBySecondFilter = (
     $("#" + type + "-all").text("Disable All");
     $("#" + type + "-all").attr("data-select", "remove");
   }
-
   if (!cfg.shapefile) {
     dbs["features"] = $.map(dbs.features, (x) => {
       x = x;
-      // if (x.properties['status'] === 'active') {
       if (dataName === "options") {
         if (dataSelection === "add") {
           x.properties["status"] = "active";
+          x.properties[keyStatus] = "active";
         } else {
           x.properties["status"] = "inactive";
+          x.properties[keyStatus] = "inactive";
         }
       } else {
-        // let condition = (filterType === 'cascade') ? answer.includes(dataName.toLowerCase()) : answer === dataName.toLowerCase();
         let answer = x.properties[key].toLowerCase();
-        let condition = answer.includes(dataName.toLowerCase());
+        let condition = answer.includes(dataName);
         // check if multiple
         if (filterType === "cascade") {
           const answers = answer.split("|");
-          condition = answers.find((x) => x === dataName.toLowerCase());
+          condition = answers.find((x) => x === dataName);
         }
         if (filterType === "option") {
-          condition = answer === dataName.toLowerCase();
+          condition = answer === dataName;
         }
         if (condition) {
           if (x.properties["status"] === "active") {
             x.properties["status"] = "inactive";
+            x.properties[keyStatus] = "inactive";
             $("#" + dataId).addClass("inactive");
           } else {
-            x.properties["status"] = "active";
-            $("#" + dataId).removeClass("inactive");
+            let findSFTmp = secondFilters.find((x) => x.key === key);
+            let sfTmp = secondFilters.filter((x) => x.key !== key);
+
+            if (sfTmp.length) {
+              sfTmp.forEach((sf) => {
+                let sfValues = sf.values;
+                let sfAnswer = x.properties[sf.key].toLowerCase();
+                if (sf.type === "cascade") {
+                  sfAnswer = sfAnswer.split("|");
+                }
+                if (sf.type === "option") {
+                  sfAnswer = [sfAnswer];
+                }
+                let check = false;
+                sfAnswer.forEach((x) => {
+                  if (sfValues.find((y) => y === x)) {
+                    check = true;
+                  }
+                });
+                if (check) {
+                  x.properties["status"] = "inactive";
+                  x.properties[sf.key + "_status"] = "inactive";
+                  $("#" + dataId).addClass("inactive");
+                } else {
+                  x.properties["status"] = "active";
+                  x.properties[sf.key + "_status"] = "active";
+                  $("#" + dataId).removeClass("inactive");
+                }
+              });
+            }
+            if (findSFTmp && sfTmp.length) {
+              let sf = findSFTmp;
+              let sfValues = sf.values;
+              let index = dataId.replace(name + "-", "");
+              let selected = options[index].text.toLowerCase();
+              let condition = sfValues.find((x) => x === selected);
+              if (condition) {
+                x.properties["status"] = "inactive";
+                x.properties[keyStatus] = "inactive";
+                $("#" + dataId).addClass("inactive");
+              }
+              if (!condition) {
+                sfTmp.forEach((sf) => {
+                  if (x.properties[sf.key + "_status"] === "inactive") {
+                    x.properties[keyStatus] = "inactive";
+                  } else {
+                    x.properties[keyStatus] = "active";
+                  }
+                });
+                if (x.properties[keyStatus] === "active") {
+                  x.properties["status"] = "active";
+                }
+                $("#" + dataId).removeClass("inactive");
+              }
+            }
+            if (!findSFTmp && sfTmp.length) {
+              sfTmp.forEach((sf) => {
+                let sfValues = sf.values;
+                let sfAnswer = x.properties[sf.key].toLowerCase();
+                if (sf.type === "cascade") {
+                  sfAnswer = sfAnswer.split("|");
+                }
+                if (sf.type === "option") {
+                  sfAnswer = [sfAnswer];
+                }
+                let check = false;
+                sfAnswer.forEach((x) => {
+                  if (sfValues.find((y) => y === x)) {
+                    check = true;
+                  }
+                });
+                if (check) {
+                  x.properties["status"] = "inactive";
+                  x.properties[sf.key + "_status"] = "inactive";
+                  $("#" + dataId).addClass("inactive");
+                } else {
+                  x.properties["status"] = "active";
+                  x.properties[sf.key + "_status"] = "active";
+                  $("#" + dataId).removeClass("inactive");
+                }
+              });
+            }
+            if (!sfTmp.length) {
+              x.properties["status"] = "active";
+              x.properties[keyStatus] = "active";
+              $("#" + dataId).removeClass("inactive");
+            }
           }
         }
-        // else {
-        //     if (x.properties['status_tmp'] === "active" || x.properties['status_tmp'] === undefined) {
-        //         x.properties['status_tmp'] = "inactive";
-        //         $('#' + dataId).addClass('inactive');
-        //     } else {
-        //         x.properties['status_tmp'] = "active";
-        //         $('#' + dataId).removeClass('inactive');
-        //     }
-        // }
       }
-      // }
       return x;
     });
     renderPieChart(dbs);
@@ -1036,36 +1117,121 @@ const filterBySecondFilter = (
       x = x;
       if (x.properties.data) {
         $.map(x.properties.data, (y) => {
-          // if (y['status'] === 'active') {
           if (dataName === "options") {
             if (dataSelection === "add") {
               y["status"] = "active";
+              y[keyStatus] = "active";
             } else {
               y["status"] = "inactive";
+              y[keyStatus] = "inactive";
             }
           } else {
-            // let condition = (filterType === 'cascade') ? answer.includes(dataName.toLowerCase()) : answer === dataName.toLowerCase();
-            let answer = x.properties[key].toLowerCase();
-            let condition = answer.includes(dataName.toLowerCase());
+            let answer = y[key].toLowerCase();
+            let condition = answer.includes(dataName);
             // check if multiple
             if (filterType === "cascade") {
               const answers = answer.split("|");
-              condition = answers.find((x) => x === dataName.toLowerCase());
+              condition = answers.find((x) => x === dataName);
             }
             if (filterType === "option") {
-              condition = answer === dataName.toLowerCase();
+              condition = answer === dataName;
             }
             if (condition) {
               if (y["status"] === "active") {
                 y["status"] = "inactive";
+                y[keyStatus] = "inactive";
                 $("#" + dataId).addClass("inactive");
               } else {
-                y["status"] = "active";
-                $("#" + dataId).removeClass("inactive");
+                let findSFTmp = secondFilters.find((x) => x.key === key);
+                let sfTmp = secondFilters.filter((x) => x.key !== key);
+
+                if (sfTmp.length) {
+                  sfTmp.forEach((sf) => {
+                    let sfValues = sf.values;
+                    let sfAnswer = y[sf.key].toLowerCase();
+                    if (sf.type === "cascade") {
+                      sfAnswer = sfAnswer.split("|");
+                    }
+                    if (sf.type === "option") {
+                      sfAnswer = [sfAnswer];
+                    }
+                    let check = false;
+                    sfAnswer.forEach((x) => {
+                      if (sfValues.find((y) => y === x)) {
+                        check = true;
+                      }
+                    });
+                    if (check) {
+                      y["status"] = "inactive";
+                      y[sf.key + "_status"] = "inactive";
+                      $("#" + dataId).addClass("inactive");
+                    } else {
+                      y["status"] = "active";
+                      y[sf.key + "_status"] = "active";
+                      $("#" + dataId).removeClass("inactive");
+                    }
+                  });
+                }
+                if (findSFTmp && sfTmp.length) {
+                  let sf = findSFTmp;
+                  let sfValues = sf.values;
+                  let index = dataId.replace(name + "-", "");
+                  let selected = options[index].text.toLowerCase();
+                  let condition = sfValues.find((x) => x === selected);
+                  if (condition) {
+                    y["status"] = "inactive";
+                    y[keyStatus] = "inactive";
+                    $("#" + dataId).addClass("inactive");
+                  }
+                  if (!condition) {
+                    sfTmp.forEach((sf) => {
+                      if (y[sf.key + "_status"] === "inactive") {
+                        y[keyStatus] = "inactive";
+                      } else {
+                        y[keyStatus] = "active";
+                      }
+                    });
+                    if (y[keyStatus] === "active") {
+                      y["status"] = "active";
+                    }
+                    $("#" + dataId).removeClass("inactive");
+                  }
+                }
+                if (!findSFTmp && sfTmp.length) {
+                  sfTmp.forEach((sf) => {
+                    let sfValues = sf.values;
+                    let sfAnswer = y[sf.key].toLowerCase();
+                    if (sf.type === "cascade") {
+                      sfAnswer = sfAnswer.split("|");
+                    }
+                    if (sf.type === "option") {
+                      sfAnswer = [sfAnswer];
+                    }
+                    let check = false;
+                    sfAnswer.forEach((x) => {
+                      if (sfValues.find((y) => y === x)) {
+                        check = true;
+                      }
+                    });
+                    if (check) {
+                      y["status"] = "inactive";
+                      y[sf.key + "_status"] = "inactive";
+                      $("#" + dataId).addClass("inactive");
+                    } else {
+                      y["status"] = "active";
+                      y[sf.key + "_status"] = "active";
+                      $("#" + dataId).removeClass("inactive");
+                    }
+                  });
+                }
+                if (!sfTmp.length) {
+                  y["status"] = "active";
+                  y[keyStatus] = "active";
+                  $("#" + dataId).removeClass("inactive");
+                }
               }
             }
           }
-          // }
           return y;
         });
       }
@@ -1662,10 +1828,6 @@ const changeValue = (database, deletes) => {
   if (!cfg.shapefile) {
     dbs["features"] = $.map(dbs.features, (x) => {
       x = x;
-      // * Filter by secondFilters if active, active data where is not on second filter list
-      if (secondFilters.length) {
-        console.log(x);
-      }
       x.properties.status = "active";
       // new method to delete beacuse of multipe answer
       deletes.forEach((d) => {
@@ -1683,11 +1845,6 @@ const changeValue = (database, deletes) => {
         x.properties.status = "active";
       }
       // eol new method to delete beacuse of multipe answer
-
-      // old method
-      // if (deletes.indexOf(x.properties[iconField]) >= 0) {
-      //     x.properties.status = "inactive";
-      // }
       return x;
     });
   }
