@@ -1,132 +1,149 @@
 const _ = require("lodash");
 
+/*
+  -- README --
+  Location using on pop up modal is
+  Column : Location : J (Province | Area | Type | Name)
+*/
 class SigWashCovid {
-    constructor(data) {
-        this.data = data;
-        this.photos = [];
-        this.configs = JSON.parse(localStorage.getItem("configs"));
-        this.properties = {};
+  constructor(data) {
+    this.data = data;
+    this.photos = [];
+    this.configs = JSON.parse(localStorage.getItem("configs"));
+    this.properties = {};
+  }
+
+  titleCase(string) {
+    var sentence = string.toLowerCase().split(" ");
+    for (var i = 0; i < sentence.length; i++) {
+      sentence[i] = sentence[i][0].toUpperCase() + sentence[i].slice(1);
     }
+    return sentence.join(" ");
+  }
 
-    titleCase(string) {
-      var sentence = string.toLowerCase().split(" ");
-      for(var i = 0; i< sentence.length; i++){
-         sentence[i] = sentence[i][0].toUpperCase() + sentence[i].slice(1);
-      }
-      return sentence.join(" ");
-    };
-
-    createCarousel() {
-        let active = "active";
-        _.filter(this.properties, (val) => {
-            if (typeof val === "string" && val.includes("https")) {
-                let carousel = '\
-                <div class="carousel-item '+active+' data-interval="10000">\
-                    <img src="'+val+'" class="d-block w-100" alt="photo">\
+  createCarousel() {
+    let active = "active";
+    _.filter(this.properties, (val) => {
+      if (typeof val === "string" && val.includes("https")) {
+        let carousel =
+          '\
+                <div class="carousel-item ' +
+          active +
+          ' data-interval="10000">\
+                    <img src="' +
+          val +
+          '" class="d-block w-100" alt="photo">\
                 </div>';
-                this.photos.push(carousel);
-                active = "";
-            }
-        });
-        return;
-    };
-
-    getLocation(locationBy) {
-      let locationIndex;
-      switch (locationBy) {
-        case 'area':
-          locationIndex = 1;
-          break;
-        case 'type':
-          locationIndex = 2;
-          break;
-        case 'name':
-          locationIndex = 3;
-          break;
-        default:
-          locationIndex = 0;
-          break;
+        this.photos.push(carousel);
+        active = "";
       }
-      return this.properties['L'].split('|')[locationIndex].toLowerCase();
+    });
+    return;
+  }
+
+  getLocation(locationBy) {
+    let locationIndex;
+    switch (locationBy) {
+      case "area":
+        locationIndex = 1;
+        break;
+      case "type":
+        locationIndex = 2;
+        break;
+      case "name":
+        locationIndex = 3;
+        break;
+      default:
+        locationIndex = 0;
+        break;
     }
+    return this.properties["J"].split("|")[locationIndex].toLowerCase();
+  }
 
-    calculateAvg(index, filterIndex, locationBy) {
-      let location = this.getLocation(locationBy);
-      let filterData = _.filter(this.data.features, x => x.properties[index].toLowerCase().includes(location));
-      filterData = _.map(filterData, x => x.properties[filterIndex]);
-      let sum = _.reduce(filterData, (sum, x) => sum + x);
-      let avg = sum / filterData.length;
-      return Math.round((avg + Number.EPSILON) * 100) / 100;
-    };
+  calculateAvg(index, filterIndex, locationBy) {
+    let location = this.getLocation(locationBy);
+    let filterData = _.filter(this.data.features, (x) =>
+      x.properties[index].toLowerCase().includes(location)
+    );
+    filterData = _.map(filterData, (x) => x.properties[filterIndex]);
+    let sum = _.reduce(filterData, (sum, x) => sum + x);
+    let avg = sum / filterData.length;
+    return Math.round((avg + Number.EPSILON) * 100) / 100;
+  }
 
-    generateBarChartData(filterIndex) {
-      let x_axis, y_axis = [];
-      // x axis [name, province]
-      x_axis = [
-        this.titleCase(this.getLocation('name')),
-        // this.titleCase(this.getLocation('type')),
-        this.titleCase(this.getLocation('area')),
-        this.titleCase(this.getLocation('province')),
-      ];
+  generateBarChartData(filterIndex) {
+    let x_axis,
+      y_axis = [];
+    // x axis [name, province]
+    x_axis = [
+      this.titleCase(this.getLocation("name")),
+      // this.titleCase(this.getLocation('type')),
+      this.titleCase(this.getLocation("area")),
+      this.titleCase(this.getLocation("province")),
+    ];
 
-      // y axis
-      y_axis.push(this.properties[filterIndex]);
-      // y_axis.push(this.calculateAvg("L", filterIndex, 'type'));
-      y_axis.push(this.calculateAvg("L", filterIndex, 'area'));
-      y_axis.push(this.calculateAvg("L", filterIndex, 'province'));
-      return {x : x_axis, y: y_axis}
-    };
+    // y axis
+    y_axis.push(this.properties[filterIndex]);
+    // y_axis.push(this.calculateAvg("J", filterIndex, 'type'));
+    y_axis.push(this.calculateAvg("J", filterIndex, "area"));
+    y_axis.push(this.calculateAvg("J", filterIndex, "province"));
+    return { x: x_axis, y: y_axis };
+  }
 
-    createBarChart(id, title, axis) {
-      let element = echarts.init(document.getElementById(id));
-      let option = {
-        title: {
-          show: true,
-          text: title,
-          textStyle: {
-            fontSize: 16,
+  createBarChart(id, title, axis) {
+    let element = echarts.init(document.getElementById(id));
+    let option = {
+      title: {
+        show: true,
+        text: title,
+        textStyle: {
+          fontSize: 16,
+        },
+      },
+      xAxis: {
+        type: "category",
+        data: axis.x,
+        axisLabel: {
+          rotate: 30,
+        },
+      },
+      yAxis: {
+        type: "value",
+        axisLabel: {
+          rotate: 45,
+        },
+      },
+      tooltip: {
+        show: true,
+        trigger: "axis",
+      },
+      series: [
+        {
+          data: axis.y,
+          type: "bar",
+          label: {
+            show: true,
           },
         },
-        xAxis: {
-            type: 'category',
-            data: axis.x,
-            axisLabel: {
-              rotate: 30,
-            },
-        },
-        yAxis: {
-            type: 'value',
-            axisLabel: {
-              rotate: 45,
-            },
-        },
-        tooltip: {
-          show: true,
-          trigger: 'axis'
-        },
-        series: [{
-            data: axis.y,
-            type: 'bar',
-            label: {
-              show: true,
-            },
-        }]
-      };
-      element.setOption(option);
-      return;
+      ],
     };
+    element.setOption(option);
+    return;
+  }
 
-    popup(datapointid) {
-        let data = this.data.features.find(x => x.properties.data_point_id == datapointid);
-        this.properties = data.properties;
-        this.createCarousel();
+  popup(datapointid) {
+    let data = this.data.features.find(
+      (x) => x.properties.data_point_id == datapointid
+    );
+    this.properties = data.properties;
+    this.createCarousel();
 
-        // Location : L (Province | Area | Type | Name)
-        let location = this.properties.L.split('|');
+    // Location : J (Province | Area | Type | Name)
+    let location = this.properties.J.split("|");
 
-        $("#detail_modal .modal-title").html(this.properties[this.configs.popup]);
-        $("#detail_modal .modal-body").html(
-            '<nav>\
+    $("#detail_modal .modal-title").html(this.properties[this.configs.popup]);
+    $("#detail_modal .modal-body").html(
+      '<nav>\
               <div class="nav nav-tabs" id="nav-tab" role="tablist">\
                 <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Profile</a>\
                 <a class="nav-item nav-link" id="nav-comparisons-tab" data-toggle="tab" href="#nav-comparisons" role="tab" aria-controls="nav-comparisons" aria-selected="false">Comparisons</a>\
@@ -140,16 +157,24 @@ class SigWashCovid {
               <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">\
                 <div id="basic-info">\
                   <div>\
-                    <b>Province</b> : '+location[0]+'\
+                    <b>Province</b> : ' +
+        location[0] +
+        "\
                   </div>\
                   <div>\
-                    <b>Area</b> : '+location[1]+'\
+                    <b>Area</b> : " +
+        location[1] +
+        "\
                   </div>\
                   <div>\
-                    <b>Type</b> : '+location[2]+'\
+                    <b>Type</b> : " +
+        location[2] +
+        "\
                   </div>\
                   <div>\
-                    <b>Name</b> : '+location[3]+'\
+                    <b>Name</b> : " +
+        location[3] +
+        '\
                   </div>\
                   <hr>\
                 </div>\
@@ -212,45 +237,83 @@ class SigWashCovid {
             \
             </div>\
             '
-        );
+    );
 
-        // append basic information
-        this.data.properties.attributes.forEach((x) => {
-          // look data into lookup (replaced text)
-          let lookupValue = data.properties[x.id];
-          if (!x.multiple) {
-            const sourceIndex = x.sources.indexOf(data.properties[x.id]);
-            lookupValue = sourceIndex === -1 ? lookupValue : x.lookup[sourceIndex];
-          }
-          $("#basic-info").append('\
+    // append basic information
+    this.data.properties.attributes.forEach((x) => {
+      // look data into lookup (replaced text)
+      let lookupValue = data.properties[x.id];
+      if (!x.multiple) {
+        const sourceIndex = x.sources.indexOf(data.properties[x.id]);
+        lookupValue = sourceIndex === -1 ? lookupValue : x.lookup[sourceIndex];
+      }
+      $("#basic-info").append(
+        "\
             <div>\
-              <b>'+x.name+' :</b>  '+lookupValue+'\
+              <b>" +
+          x.name +
+          " :</b>  " +
+          lookupValue +
+          "\
             </div>\
             <hr>\
-          ');
-        });
-        // eol basic information
+          "
+      );
+    });
+    // eol basic information
 
-        // 281751020|What is the estimated number of patients visiting this facility in a typical day? : AF
-        this.createBarChart("patient-visit-cart", "Number of patients visiting Facility Mean Comparisons", this.generateBarChartData("AF"));
-        // 267650916|Total number of beds in the Health Care Facility : GI
-        this.createBarChart("bed-total-cart", "Number of beds in Facility\nMean Comparisons", this.generateBarChartData("GI"));
-        // 283700916|Total number of staff : GJ
-        this.createBarChart("staff-total-cart", "Number of staff in Facility\nMean Comparisons", this.generateBarChartData("GJ"));
-        // 279790917|Calculate the Occupancy Rate %: (Number of beds occupied at the moment) divided by (total number of beds in the facility), multiplied by 100 : GK
-        this.createBarChart("occupancy-cart", "Occupancy Rate (%) in Facility Mean Comparisons", this.generateBarChartData("GK"));
-        // 289820918|Calculate the water demand in liters: (Number of patients and staff at the moment) multiplied by 150 : GL
-        this.createBarChart("water-demand-cart", "Water demand (liters) in Facility\nMean Comparisons", this.generateBarChartData("GL"));
-        // 259820916|Calculate the expected grey water: Take the answer from question 4 and multiply it by .8 : GM
-        this.createBarChart("grey-water-cart", "Expected grey water in Facility\nMean Comparisons", this.generateBarChartData("GM"));
-        // 285760916|Calculate the expected black water: Take the answer from question 4 and multiply it by .2 : GN
-        this.createBarChart("black-water-cart", "Expected black water in Facility\nMean Comparisons", this.generateBarChartData("GN"));
-        // 263740916|Calculate the expected liters of fecal matter in black water per day: (Number of patients and staff at the moment) multiplied by .5 : GO
-        this.createBarChart("fecal-matter-cart", "Expected fecal mater in black water per day\nMean Comparisons", this.generateBarChartData("GO"));
+    // 281751020|What is the estimated number of patients visiting this facility in a typical day? : AB
+    this.createBarChart(
+      "patient-visit-cart",
+      "Number of patients visiting Facility Mean Comparisons",
+      this.generateBarChartData("AB")
+    );
+    // 267650916|Total number of beds in the Health Care Facility : GF
+    this.createBarChart(
+      "bed-total-cart",
+      "Number of beds in Facility\nMean Comparisons",
+      this.generateBarChartData("GF")
+    );
+    // 283700916|Total number of staff : GG
+    this.createBarChart(
+      "staff-total-cart",
+      "Number of staff in Facility\nMean Comparisons",
+      this.generateBarChartData("GG")
+    );
+    // 279790917|Calculate the Occupancy Rate %: (Number of beds occupied at the moment) divided by (total number of beds in the facility), multiplied by 100 : GH
+    this.createBarChart(
+      "occupancy-cart",
+      "Occupancy Rate (%) in Facility Mean Comparisons",
+      this.generateBarChartData("GH")
+    );
+    // 289820918|Calculate the water demand in liters: (Number of patients and staff at the moment) multiplied by 150 : GI
+    this.createBarChart(
+      "water-demand-cart",
+      "Water demand (liters) in Facility\nMean Comparisons",
+      this.generateBarChartData("GI")
+    );
+    // 259820916|Calculate the expected grey water: Take the answer from question 4 and multiply it by .8 : GJ
+    this.createBarChart(
+      "grey-water-cart",
+      "Expected grey water in Facility\nMean Comparisons",
+      this.generateBarChartData("GJ")
+    );
+    // 285760916|Calculate the expected black water: Take the answer from question 4 and multiply it by .2 : GK
+    this.createBarChart(
+      "black-water-cart",
+      "Expected black water in Facility\nMean Comparisons",
+      this.generateBarChartData("GK")
+    );
+    // 263740916|Calculate the expected liters of fecal matter in black water per day: (Number of patients and staff at the moment) multiplied by .5 : GL
+    this.createBarChart(
+      "fecal-matter-cart",
+      "Expected fecal mater in black water per day\nMean Comparisons",
+      this.generateBarChartData("GL")
+    );
 
-        $("#photo-temp").html(this.photos);
-        return;
-    };
+    $("#photo-temp").html(this.photos);
+    return;
+  }
 }
 
 export default SigWashCovid;
