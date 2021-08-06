@@ -5,7 +5,7 @@
     </button>
 
     <div class="collapse navbar-collapse" id="navbarsExampleDefault">
-        
+
         <ul class="navbar-nav mr-auto">
             <a class="navbar-brand" href="#">
                 <img src="{{ asset('/images/logo/si-government.png') }}" width="40" height="40" class="d-inline-block justify-contentle" alt="">
@@ -58,6 +58,6 @@
                 <a href="#" onclick="focusTo()" class="btn btn-primary my-2 my-sm-0"><i class="fa fa-search"></i></a>
             </form>
         </div>
-        
+
     </div>
 </nav>

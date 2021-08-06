@@ -35,6 +35,13 @@ return [
       "search" => [ // column name for search by
         "Type of Hospital / Health Facility",
       ],
+      // remove personal data drom dataset
+      "personal_data" => [
+        "Display Name",
+        "Submitter",
+        "259801000|Please enter the telephone number",
+        "271861016|Please enter the contact person's email address.",
+      ],
       "secondary_filter" => [ // column name for second filter
         [
           "question_id" => 265670992,
