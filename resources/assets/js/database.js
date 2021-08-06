@@ -167,7 +167,6 @@ const getData = () => {
     return temp;
   });
   $("#pre-loader").fadeOut("slow");
-  console.log(data);
   return data;
 };
 
