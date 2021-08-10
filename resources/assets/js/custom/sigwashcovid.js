@@ -3,7 +3,7 @@ const _ = require("lodash");
 /*
   -- README --
   Location using on pop up modal is
-  Column : Location : J (Province | Area | Type | Name)
+  Column : Location : I (Province | Area | Type | Name)
 */
 class SigWashCovid {
   constructor(data) {
@@ -57,7 +57,7 @@ class SigWashCovid {
         locationIndex = 0;
         break;
     }
-    return this.properties["J"].split("|")[locationIndex].toLowerCase();
+    return this.properties["I"].split("|")[locationIndex].toLowerCase();
   }
 
   calculateAvg(index, filterIndex, locationBy) {
@@ -84,9 +84,9 @@ class SigWashCovid {
 
     // y axis
     y_axis.push(this.properties[filterIndex]);
-    // y_axis.push(this.calculateAvg("J", filterIndex, 'type'));
-    y_axis.push(this.calculateAvg("J", filterIndex, "area"));
-    y_axis.push(this.calculateAvg("J", filterIndex, "province"));
+    // y_axis.push(this.calculateAvg("I", filterIndex, 'type'));
+    y_axis.push(this.calculateAvg("I", filterIndex, "area"));
+    y_axis.push(this.calculateAvg("I", filterIndex, "province"));
     return { x: x_axis, y: y_axis };
   }
 
@@ -138,8 +138,8 @@ class SigWashCovid {
     this.properties = data.properties;
     this.createCarousel();
 
-    // Location : J (Province | Area | Type | Name)
-    let location = this.properties.J.split("|");
+    // Location : "I" (Province | Area | Type | Name)
+    let location = this.properties["I"].split("|");
 
     $("#detail_modal .modal-title").html(this.properties[this.configs.popup]);
     $("#detail_modal .modal-body").html(
@@ -262,53 +262,53 @@ class SigWashCovid {
     });
     // eol basic information
 
-    // 281751020|What is the estimated number of patients visiting this facility in a typical day? : AB
+    // 281751020|What is the estimated number of patients visiting this facility in a typical day? : AA
     this.createBarChart(
       "patient-visit-cart",
       "Number of patients visiting Facility Mean Comparisons",
-      this.generateBarChartData("AB")
+      this.generateBarChartData("AA")
     );
-    // 267650916|Total number of beds in the Health Care Facility : GF
+    // 267650916|Total number of beds in the Health Care Facility : GE
     this.createBarChart(
       "bed-total-cart",
       "Number of beds in Facility\nMean Comparisons",
-      this.generateBarChartData("GF")
+      this.generateBarChartData("GE")
     );
-    // 283700916|Total number of staff : GG
+    // 283700916|Total number of staff : GF
     this.createBarChart(
       "staff-total-cart",
       "Number of staff in Facility\nMean Comparisons",
-      this.generateBarChartData("GG")
+      this.generateBarChartData("GF")
     );
-    // 279790917|Calculate the Occupancy Rate %: (Number of beds occupied at the moment) divided by (total number of beds in the facility), multiplied by 100 : GH
+    // 279790917|Calculate the Occupancy Rate %: (Number of beds occupied at the moment) divided by (total number of beds in the facility), multiplied by 100 : GG
     this.createBarChart(
       "occupancy-cart",
       "Occupancy Rate (%) in Facility Mean Comparisons",
-      this.generateBarChartData("GH")
+      this.generateBarChartData("GG")
     );
-    // 289820918|Calculate the water demand in liters: (Number of patients and staff at the moment) multiplied by 150 : GI
+    // 289820918|Calculate the water demand in liters: (Number of patients and staff at the moment) multiplied by 150 : GH
     this.createBarChart(
       "water-demand-cart",
       "Water demand (liters) in Facility\nMean Comparisons",
-      this.generateBarChartData("GI")
+      this.generateBarChartData("GH")
     );
-    // 259820916|Calculate the expected grey water: Take the answer from question 4 and multiply it by .8 : GJ
+    // 259820916|Calculate the expected grey water: Take the answer from question 4 and multiply it by .8 : GI
     this.createBarChart(
       "grey-water-cart",
       "Expected grey water in Facility\nMean Comparisons",
-      this.generateBarChartData("GJ")
+      this.generateBarChartData("GI")
     );
-    // 285760916|Calculate the expected black water: Take the answer from question 4 and multiply it by .2 : GK
+    // 285760916|Calculate the expected black water: Take the answer from question 4 and multiply it by .2 : GJ
     this.createBarChart(
       "black-water-cart",
       "Expected black water in Facility\nMean Comparisons",
-      this.generateBarChartData("GK")
+      this.generateBarChartData("GJ")
     );
-    // 263740916|Calculate the expected liters of fecal matter in black water per day: (Number of patients and staff at the moment) multiplied by .5 : GL
+    // 263740916|Calculate the expected liters of fecal matter in black water per day: (Number of patients and staff at the moment) multiplied by .5 : GK
     this.createBarChart(
       "fecal-matter-cart",
       "Expected fecal mater in black water per day\nMean Comparisons",
-      this.generateBarChartData("GL")
+      this.generateBarChartData("GK")
     );
 
     $("#photo-temp").html(this.photos);
